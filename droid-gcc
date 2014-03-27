@@ -2,6 +2,8 @@
 
 =begin
 
+  Original license:
+
   droid-wrapper : Android toolchain wrapper script
   version 1.0.5
 
@@ -48,9 +50,9 @@ if (!droid_host)
     droid_host = "linux-x86"
 end
 
-toolver = "4.2.1"
+toolver = "4.7"
 
-toolchain = "#{droid_root}/prebuilt/#{droid_host}/toolchain/arm-eabi-#{toolver}"
+toolchain = "#{droid_root}/prebuilts/gcc/#{droid_host}/arm/arm-linux-androideabi-#{toolver}"
 alib = "#{droid_root}/out/target/product/#{droid_target}/obj/lib"
 
 # many compiler/linker flags were extracted from
@@ -58,6 +60,7 @@ alib = "#{droid_root}/out/target/product/#{droid_target}/obj/lib"
 
 cflags =
     [
+     "-march=armv7-a",
      "-DANDROID",
      "-msoft-float",
      "-fpic",
@@ -95,7 +98,6 @@ cflags =
 link_args =
     [
      "-Bdynamic",
-     "-Wl,-T,#{droid_root}/build/core/armelf.x",
      "-Wl,-dynamic-linker,/system/bin/linker",
      "-Wl,--gc-sections",
      "-Wl,-z,nocopyreloc",
@@ -105,7 +107,7 @@ link_args =
      "-L#{alib}",
      "-nostdlib",
      "#{alib}/crtbegin_dynamic.o",
-     "#{toolchain}/lib/gcc/arm-eabi/#{toolver}/libgcc.a",
+     "#{toolchain}/lib/gcc/arm-linux-androideabi/#{toolver}/libgcc.a",
      "#{alib}/crtend_android.o",
      "-lc",
      "-lm"
@@ -114,7 +116,6 @@ link_args =
 shlib_args =
     [
      "-nostdlib",
-     "-Wl,-T,#{droid_root}/build/core/armelf.xsc",
      "-Wl,--gc-sections",
      "-Wl,-shared,-Bsymbolic",
      "-L#{alib}",
@@ -122,7 +123,7 @@ shlib_args =
      "-lc",
      "-lm",
      "-Wl,--no-undefined",
-     "#{toolchain}/lib/gcc/arm-eabi/#{toolver}/interwork/libgcc.a",
+     "#{toolchain}/lib/gcc/arm-linux-androideabi/#{toolver}/libgcc.a",
      "-Wl,--whole-archive",
      "-Wl,--warn-unresolved-symbols"
     ]
@@ -132,7 +133,7 @@ prog = nil
 oprog = nil
 if ($0 =~ /^.*-([^-]+)$/) 
     oprog = $1
-    prog = "#{toolchain}/bin/arm-eabi-#{$1}"
+    prog = "#{toolchain}/bin/arm-linux-androideabi-#{$1}"
 else
     STDERR.puts "internal error: invalid command name."
     exit 1
